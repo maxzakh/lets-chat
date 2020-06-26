@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         fontSize: 45,
         fontWeight: "600",
         color: '#FFFFFF',
-        marginTop: 75,
+        marginTop: '75px',
     },
     container: {
         flex: 1,
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
         color: '#000000',
         borderWidth: 1,
         borderColor: 'grey',
-        margin: '0 30',
-        marginTop: 30,
+        margin: '0 30px',
+        marginTop: '30px',
         width: '48%'
     },
     text: {
