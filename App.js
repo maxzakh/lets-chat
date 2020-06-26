@@ -26,7 +26,7 @@ export default class App extends React.Component {
                     initialRouteName="Start"
                 >
                     <Stack.Screen
-                        name="Welcome"
+                        name="Welcome to Let's Chat"
                         component={Start}
                     />
                     <Stack.Screen
@@ -38,22 +38,3 @@ export default class App extends React.Component {
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column'
-    },
-    box1: {
-        flex: 10,
-        backgroundColor: 'blue'
-    },
-    box2: {
-        flex: 120,
-        backgroundColor: 'red'
-    },
-    box3: {
-        flex: 50,
-        backgroundColor: 'green'
-    }
-});
