@@ -23,7 +23,13 @@ export default class Chat extends React.Component {
                         avatar: 'https://placeimg.com/140/140/any',
                     },
                 },
-            ],
+                {
+                    _id: 2,
+                    text: 'This is a system message',
+                    createdAt: new Date(),
+                    system: true,
+                },
+            ]
         })
     }
 
@@ -40,6 +46,14 @@ export default class Chat extends React.Component {
                 }}
             >
                 {/* Rest of the UI */}
+                <GiftedChat
+                    messages={this.state.messages}
+                    onSend={messages => this.onSend(messages)}
+                    user={{
+                        _id: 1,
+                    }}
+                />
+                {/* {Platform.OS === 'android' ? <KeyboardSpacer /> : null} */}
             </View>
         );
     };
