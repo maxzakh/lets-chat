@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble } from 'react-native-gifted-chat'
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -33,6 +33,19 @@ export default class Chat extends React.Component {
         })
     }
 
+    renderBubble(props) {
+        return (
+            <Bubble
+                {...props}
+                wrapperStyle={{
+                    right: {
+                        backgroundColor: '#000'
+                    }
+                }}
+            />
+        )
+    }
+
     render() {
         let name = this.props.route.params.name;
 
@@ -47,6 +60,7 @@ export default class Chat extends React.Component {
             >
                 {/* Rest of the UI */}
                 <GiftedChat
+                    renderBubble={this.renderBubble.bind(this)}
                     messages={this.state.messages}
                     onSend={messages => this.onSend(messages)}
                     user={{
