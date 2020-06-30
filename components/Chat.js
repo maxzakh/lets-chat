@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat'
+import { StyleSheet, View, Text, Platform } from 'react-native';
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 
 export default class Chat extends React.Component {
     constructor(props) {
@@ -8,6 +8,12 @@ export default class Chat extends React.Component {
         this.state = {
             messages: []
         }
+    }
+
+    onSend(messages = []) {
+        this.setState(previousState => ({
+            messages: GiftedChat.append(previousState.messages, messages),
+        }))
     }
 
     componentDidMount() {
@@ -25,7 +31,7 @@ export default class Chat extends React.Component {
                 },
                 {
                     _id: 2,
-                    text: 'This is a system message',
+                    text: 'Welcome to Let\'s Chat',
                     createdAt: new Date(),
                     system: true,
                 },
@@ -67,7 +73,7 @@ export default class Chat extends React.Component {
                         _id: 1,
                     }}
                 />
-                {/* {Platform.OS === 'android' ? <KeyboardSpacer /> : null} */}
+                {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
             </View>
         );
     };
