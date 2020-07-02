@@ -1,12 +1,30 @@
 import React from 'react';
-import { StyleSheet, View, Text, Platform } from 'react-native';
+import { StyleSheet, View, Button, Text, Platform, FlatList } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+
+const firebase = require('firebase');
+require('firebase/firestore');
 
 export default class Chat extends React.Component {
     constructor(props) {
         super(props);
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyA5IosLxJ_cfz0um1GMXklR22Jjh9HEKnQ",
+                authDomain: "calm-snowfall-231404.firebaseapp.com",
+                databaseURL: "https://calm-snowfall-231404.firebaseio.com",
+                projectId: "calm-snowfall-231404",
+                storageBucket: "calm-snowfall-231404.appspot.com",
+                messagingSenderId: "460043889984"
+            });
+        }
+
+        this.referenceShoppingLists = firebase.firestore().collection('shoppinglists');
+
         this.state = {
-            messages: []
+            messages: [],
+            list: []
         }
     }
 
@@ -16,7 +34,32 @@ export default class Chat extends React.Component {
         }))
     }
 
+    onCollectionUpdate = (querySnapshot) => {
+        const lists = [];
+        // go through each document
+        querySnapshot.forEach((doc) => {
+            // get the QueryDocumentSnapshot's data
+            var data = doc.data();
+            lists.push({
+                name: data.name,
+                items: data.items.toString(),
+            });
+        });
+        this.setState({
+            lists,
+        });
+    };
+
+    addList() {
+        this.referenceShoppingLists.add({
+            name: 'TestList',
+            items: ['eggs', 'pasta', 'veggies'],
+        });
+    }
+
     componentDidMount() {
+        this.unsubscribe = this.referenceShoppingLists.onSnapshot(this.onCollectionUpdate)
+
         this.setState({
             messages: [
                 {
@@ -37,6 +80,10 @@ export default class Chat extends React.Component {
                 },
             ]
         })
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     renderBubble(props) {
@@ -65,6 +112,12 @@ export default class Chat extends React.Component {
                 }}
             >
                 {/* Rest of the UI */}
+                <FlatList
+                    data={this.state.lists}
+                    renderItem={({ item }) =>
+                        <Text>{item.name}: {item.items}</Text>}
+                />
+
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
                     messages={this.state.messages}
@@ -73,6 +126,9 @@ export default class Chat extends React.Component {
                         _id: 1,
                     }}
                 />
+
+                <Button title='Press Me' onPress={() => this.addList()} />
+
                 {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
             </View>
         );

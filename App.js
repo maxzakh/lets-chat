@@ -8,31 +8,43 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Start from './components/Start';
 import Chat from './components/Chat';
 
-const firebase = require('firebase');
-require('firebase/firestore');
-
 const Stack = createStackNavigator();
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { text: '' }
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp({
-                apiKey: "AIzaSyA5IosLxJ_cfz0um1GMXklR22Jjh9HEKnQ",
-                authDomain: "calm-snowfall-231404.firebaseapp.com",
-                databaseURL: "https://calm-snowfall-231404.firebaseio.com",
-                projectId: "calm-snowfall-231404",
-                storageBucket: "calm-snowfall-231404.appspot.com",
-                messagingSenderId: "460043889984"
-            });
+        this.state = {
+            lists: [],
+            text: ''
         }
     }
 
     alertMyText(input = []) {
         Alert.alert(input.text);
     }
+
+    addList() {
+        this.referenceShoppingLists.add({
+            name: 'TestList',
+            items: ['eggs', 'pasta', 'veggies'],
+        });
+    }
+
+    onCollectionUpdate = (querySnapshot) => {
+        const lists = [];
+        // go through each document
+        querySnapshot.forEach((doc) => {
+            // get the QueryDocumentSnapshot's data
+            var data = doc.data();
+            lists.push({
+                name: data.name,
+                items: data.items.toString(),
+            });
+        });
+        this.setState({
+            lists,
+        });
+    };
 
     render() {
         return (
