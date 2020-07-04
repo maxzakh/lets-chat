@@ -60,9 +60,9 @@ export default class Chat extends React.Component {
     }
 
     componentDidMount() {
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
             if (!user) {
-                firebase.auth().signInAnonymously();
+                await firebase.auth().signInAnonymously();
             }
 
             //update user state with currently active user data
