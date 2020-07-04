@@ -24,7 +24,8 @@ export default class Chat extends React.Component {
 
         this.state = {
             messages: [],
-            list: []
+            list: [],
+            uid: ''
         }
     }
 
@@ -54,10 +55,23 @@ export default class Chat extends React.Component {
         this.referenceShoppingLists.add({
             name: 'TestList',
             items: ['eggs', 'pasta', 'veggies'],
+            uid: this.state.uid,
         });
     }
 
     componentDidMount() {
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                firebase.auth().signInAnonymously();
+            }
+
+            //update user state with currently active user data
+            this.setState({
+                uid: user.uid,
+                loggedInText: 'Hello there',
+            });
+        });
+
         this.unsubscribe = this.referenceShoppingLists.onSnapshot(this.onCollectionUpdate)
 
         this.setState({
@@ -83,6 +97,8 @@ export default class Chat extends React.Component {
     }
 
     componentWillUnmount() {
+        this.authUnsubscribe();
+
         this.unsubscribe();
     }
 
@@ -112,6 +128,7 @@ export default class Chat extends React.Component {
                 }}
             >
                 {/* Rest of the UI */}
+                <Text>{this.state.loggedInText}</Text>
                 <FlatList
                     data={this.state.lists}
                     renderItem={({ item }) =>
