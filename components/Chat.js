@@ -29,10 +29,28 @@ export default class Chat extends React.Component {
         }
     }
 
+    async saveMessages() {
+        try {
+            await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    async deleteMessages() {
+        try {
+            await AsyncStorage.removeItem('messages');
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
     onSend(messages = []) {
         this.setState(previousState => ({
             messages: GiftedChat.append(previousState.messages, messages),
-        }))
+        }), () => {
+            this.saveMessages();
+        });
     }
 
     onCollectionUpdate = (querySnapshot) => {
@@ -57,6 +75,18 @@ export default class Chat extends React.Component {
             items: ['eggs', 'pasta', 'veggies'],
             uid: this.state.uid,
         });
+    }
+
+    getMessages = async () => {
+        let messages = '';
+        try {
+            messages = await AsyncStorage.getItem('messages') || [];
+            this.setState({
+                messages: JSON.parse(messages)
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
     componentDidMount() {
