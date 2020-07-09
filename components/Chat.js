@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Button, Text, Platform, FlatList } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import NetInfo from '@react-native-community/netinfo';
+import MapView from 'react-native-maps';
 
 const firebase = require('firebase');
 require('firebase/firestore');
