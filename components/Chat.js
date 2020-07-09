@@ -27,7 +27,7 @@ export default class Chat extends React.Component {
             messages: [],
             list: [],
             uid: '',
-            isConnected: ''
+            isConnected: false
         }
     }
 
@@ -103,46 +103,48 @@ export default class Chat extends React.Component {
     }
 
     componentDidMount() {
-
-
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-            if (!user) {
-                try {
-                    await firebase.auth().signInAnonymously();
-                } catch (error) {
-                    console.log(`Cannot sign in: ${error.message}`);
-                }
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if (isConnected) {
+                this.authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
+                    if (!user) {
+                        try {
+                            await firebase.auth().signInAnonymously();
+                        } catch (error) {
+                            console.log(`Cannot sign in: ${error.message}`);
+                        }
+                    }
+                    this.setState({
+                        uid: user.uid,
+                        loggedInText: 'Hello there',
+                        isConnected: true,
+                        messages: [
+                            {
+                                _id: 1,
+                                text: 'Hello developer',
+                                createdAt: new Date(),
+                                user: {
+                                    _id: 2,
+                                    name: 'React Native',
+                                    avatar: 'https://placeimg.com/140/140/any',
+                                },
+                            },
+                            {
+                                _id: 2,
+                                text: 'Welcome to Let\'s Chat',
+                                createdAt: new Date(),
+                                system: true,
+                            },
+                        ]
+                    });
+                    this.unsubscribe = this.referenceShoppingLists.onSnapshot(this.onCollectionUpdate)
+                });
+            } else {
+                this.setState({
+                    isConnected: false,
+                });
+                this.getMessages();
             }
-
-            //update user state with currently active user data
-            this.setState({
-                uid: user.uid,
-                loggedInText: 'Hello there',
-            });
         });
-
-        this.unsubscribe = this.referenceShoppingLists.onSnapshot(this.onCollectionUpdate)
-
-        this.setState({
-            messages: [
-                {
-                    _id: 1,
-                    text: 'Hello developer',
-                    createdAt: new Date(),
-                    user: {
-                        _id: 2,
-                        name: 'React Native',
-                        avatar: 'https://placeimg.com/140/140/any',
-                    },
-                },
-                {
-                    _id: 2,
-                    text: 'Welcome to Let\'s Chat',
-                    createdAt: new Date(),
-                    system: true,
-                },
-            ]
-        })
     }
 
     componentWillUnmount() {
