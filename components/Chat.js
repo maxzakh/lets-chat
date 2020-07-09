@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Button, Text, Platform, FlatList } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import NetInfo from '@react-native-community/netinfo';
 
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -25,7 +26,8 @@ export default class Chat extends React.Component {
         this.state = {
             messages: [],
             list: [],
-            uid: ''
+            uid: '',
+            isConnected: ''
         }
     }
 
@@ -89,10 +91,27 @@ export default class Chat extends React.Component {
         }
     }
 
+    renderInputToolbar(props) {
+        if (this.state.isConnected == false) {
+        } else {
+            return (
+                <InputToolbar
+                    {...props}
+                />
+            );
+        }
+    }
+
     componentDidMount() {
+
+
         this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
             if (!user) {
-                await firebase.auth().signInAnonymously();
+                try {
+                    await firebase.auth().signInAnonymously();
+                } catch (error) {
+                    console.log(`Cannot sign in: ${error.message}`);
+                }
             }
 
             //update user state with currently active user data
