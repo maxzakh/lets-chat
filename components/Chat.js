@@ -3,6 +3,7 @@ import { StyleSheet, View, Button, Text, Platform, FlatList } from 'react-native
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import NetInfo from '@react-native-community/netinfo';
 import MapView from 'react-native-maps';
+import CustomActions from './CustomActions';
 
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -103,6 +104,29 @@ export default class Chat extends React.Component {
         }
     }
 
+    renderCustomView(props) {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                />
+            );
+        }
+        return null;
+    }
+
     componentDidMount() {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
@@ -167,6 +191,8 @@ export default class Chat extends React.Component {
         )
     }
 
+    renderCustomActions = (props) => <CustomActions {...props} />;
+
     render() {
         let name = this.props.route.params.name;
 
@@ -190,6 +216,7 @@ export default class Chat extends React.Component {
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
                     messages={this.state.messages}
+                    renderActions={this.renderCustomActions}
                     onSend={messages => this.onSend(messages)}
                     user={{
                         _id: 1,
