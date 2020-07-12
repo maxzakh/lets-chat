@@ -7,6 +7,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 import Start from './components/Start';
 import Chat from './components/Chat';
+import CustomActions from './components/CustomActions';
 
 const Stack = createStackNavigator();
 
