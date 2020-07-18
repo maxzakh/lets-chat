@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View, Button, Text, Platform, FlatList } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import NetInfo from '@react-native-community/netinfo';
-import MapView from 'react-native-maps';
 import CustomActions from './CustomActions';
 
 const firebase = require('firebase');
@@ -22,8 +21,6 @@ export default class Chat extends React.Component {
                 messagingSenderId: "460043889984"
             });
         }
-
-        this.referenceShoppingLists = firebase.firestore().collection('shoppinglists');
 
         this.state = {
             messages: [],
@@ -90,30 +87,27 @@ export default class Chat extends React.Component {
     */
 
     onCollectionUpdate = (querySnapshot) => {
-        const lists = [];
+        const messages = [];
         // go through each document
         querySnapshot.forEach((doc) => {
             // get the QueryDocumentSnapshot's data
             var data = doc.data();
-            lists.push({
-                name: data.name,
-                items: data.items.toString(),
+            messages.push({
+                _id: data._id,
+                text: data.text.toString(),
+                createdAt: data.createdAt.toDate(),
+                user: {
+                    _id: data.user._id,
+                    name: data.user.name,
+                },
+                image: data.image || '',
+                location: data.location,
             });
         });
         this.setState({
-            lists,
+            messages,
         });
     };
-
-    // only for testing
-
-    addList() {
-        this.referenceShoppingLists.add({
-            name: 'TestList',
-            items: ['eggs', 'pasta', 'veggies'],
-            uid: this.state.uid,
-        });
-    }
 
     /**
     * Loads messages from AsyncStorage
@@ -237,7 +231,6 @@ export default class Chat extends React.Component {
                             },
                         ]
                     });
-                    this.unsubscribe = this.referenceShoppingLists.onSnapshot(this.onCollectionUpdate)
                 });
             } else {
                 this.setState({
@@ -292,8 +285,6 @@ export default class Chat extends React.Component {
                         _id: 1,
                     }}
                 />
-
-                <Button title='Press Me' onPress={() => this.addList()} />
 
                 {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
             </View>
